@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 自适应图标前景：深浅切换图元（左半实心 / 右半描边）。
+     全部内容落在中心 66x66 安全区内，圆形、方形、水滴、异形遮罩都不会切到主体。
+     也直接用作 monochrome 层，Android 13+ 主题图标会自动取色。 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- 外层细环：给主体一点纵深，半径 31，仍在安全区内 -->
+    <path
+        android:pathData="M54,23 A31,31 0 1 1 53.99,23"
+        android:fillColor="#00000000"
+        android:strokeColor="#26FFFFFF"
+        android:strokeWidth="1.4" />
+
+    <!-- 左半实心：浅色的一半 -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M54,28 A26,26 0 0 0 54,80 Z" />
+
+    <!-- 右半描边：深色的一半 -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M54,28 A26,26 0 0 1 54,80"
+        android:strokeColor="#99FFFFFF"
+        android:strokeLineCap="round"
+        android:strokeWidth="4.8" />
+</vector>

@@ -1,0 +1,44 @@
+name: Bug report
+description: Something does not work as expected
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. **Attach the compatibility report** — it answers most questions before I have to ask them.
+
+        In the app: *Compatibility → Export report*. It writes a zip to `Download/AnyNight`. Drag it into this issue.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you expected, and what happened instead.
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device / ROM / Android version
+      placeholder: Xiaomi 17 Ultra, HyperOS 4.0.7.0, Android 17
+    validations:
+      required: true
+  - type: textarea
+    id: target
+    attributes:
+      label: Target app(s)
+      description: Which apps are in your list, and which one misbehaves?
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before reporting
+      options:
+        - label: Shizuku is running and AnyNight is authorised inside it
+        - label: The accessibility service is enabled for AnyNight
+        - label: Battery mode is set to "no restrictions"
+        - label: I read "If an app does not change" in the README (app-internal "Follow system")
+  - type: textarea
+    id: log
+    attributes:
+      label: Compatibility report
+      description: Drag the exported zip here.

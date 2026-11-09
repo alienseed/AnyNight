@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AnyNight</string>
+    <string name="app_slogan">指定应用独立深浅模式</string>
+    <string name="guide_title">使用教程</string>
+    <string name="shizuku_title">启用 Shizuku</string>
+    <string name="lock_title">先给任务卡片上锁</string>
+    <string name="check_title">兼容性信息</string>
+    <string name="a11y_desc">AnyNight 用它识别当前前台应用，并在你指定的应用内临时切换系统深浅色。部分系统（如 HyperOS）会挂起普通后台进程，本服务借助系统绑定的无障碍通道保持检测线程存活。不读取屏幕内容，不收集任何数据。</string>
+</resources>

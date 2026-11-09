@@ -1,0 +1,24 @@
+# Gradle
+.gradle/
+build/
+app/build/
+local.properties
+*.hprof
+
+# IDE
+.idea/
+*.iml
+.DS_Store
+
+# Signing material
+*.jks
+*.keystore
+
+# Build output that does not belong in git
+dist/
+*.apk
+*.aab
+
+# Scratch files
+*.log
+*.png.bak

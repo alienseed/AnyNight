@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AnyNight</string>
+    <string name="app_slogan">Per-app dark / light mode</string>
+    <string name="guide_title">Guide</string>
+    <string name="shizuku_title">Set up Shizuku</string>
+    <string name="lock_title">Lock the Recents card first</string>
+    <string name="check_title">Compatibility</string>
+    <string name="a11y_desc">AnyNight uses this service to detect the foreground app and switch the system light/dark mode while you are inside the apps you picked. Some ROMs (HyperOS, for example) suspend ordinary background processes, so the service keeps the detection thread alive through the accessibility channel bound by the system. It never reads screen content and collects no data.</string>
+</resources>
