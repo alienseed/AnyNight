@@ -10,7 +10,7 @@
 
 <p align="center">
   <img src="docs/home-zh.png" width="240" alt="首页">
-  <img src="docs/picker.png" width="240" alt="选择应用">
+  <img src="docs/picker-zh.png" width="240" alt="选择应用">
   <img src="docs/guide.png" width="240" alt="使用教程">
 </p>
 
