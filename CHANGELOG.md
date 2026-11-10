@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.9.2 — 2026-11-10
+
+Follow-up to 1.9.1: WeChat opened, but the share screen came up blank.
+
+- 1.9.1 still switched the theme the moment the receiving app came to the front. A global
+  configuration change recreates the activity that is drawing — WeChat's image-send screen
+  reloaded and never got its image back, so it showed an empty white page.
+- The receiving app is now treated as part of the share chain: once a chooser or dialog
+  hands over to another app, nothing is switched until you actually leave that app. Sharing
+  stays exactly in the theme you started from, and the restore happens when you go home or
+  switch to something else.
+- Added the dual-app (XSpace) picker to the pass-through list — it is another chooser that
+  appears in the middle of the same flow.
+
 ## 1.9.1 — 2026-11-10
 
 Sharing fix. Two bugs, one visible symptom: sending a photo from the gallery to WeChat

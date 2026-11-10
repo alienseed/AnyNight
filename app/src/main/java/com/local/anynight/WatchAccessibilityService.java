@@ -48,19 +48,19 @@ public class WatchAccessibilityService extends AccessibilityService {
     private final ExecutorService switchExecutor = Executors.newSingleThreadExecutor();
 
     /**
-     * 分享/授权弹窗之后给目标应用留的启动时间。
+     * 分享/跳转链路上的判定。
      *
-     * 从相册「发送到微信」时，前台会瞬间变成选择器；如果在那 0.7 秒里拨系统开关，
-     * 全局配置变化会把正在进行的跨应用启动打断——微信起不来，看起来就是"点了没反应"。
-     * 所以选择器消失后先等它落稳，再决定切不切。
+     * 从相册「发送」到微信时，前台会先变成系统的分享面板（跳板），再落到微信。
+     * 旧的实现在面板出现时就把主题还原了，正好打断图片交接；在微信起来后再拨一次，
+     * 又会让图片发送界面重建、加载不回图片（用户看到的"空白一片"）。
+     * 所以：跳板穿透，落点应用在整个流程里一律不动，等真正离开它才还原。
      */
-    private static final long SETTLE_MS = 600L;
-    /** 选择器消失后多久内仍按「刚跳转过」处理（用户可能在选择器里挑很久）。 */
-    private static final long SETTLE_WINDOW_MS = 12_000L;
+    private long lastTransientAt;
+    /** 跳板之后落到的那个应用；非空表示"正在分享流程里，别动"。 */
+    private String chainPkg;
     /** 两次真实切换之间的最小间隔，防止事件风暴里来回拨。 */
     private static final long COOLDOWN_MS = 350L;
 
-    private long lastTransientAt;
     private long lastApplyAt;
 
     /** 服务销毁后的宽限还原（跨实例，重连时取消）。 */
@@ -271,14 +271,27 @@ public class WatchAccessibilityService extends AccessibilityService {
             return;
         }
 
-        // ② 刚从临时界面跳到真实应用：等它完全起来再判定，别把分享流程顶掉
-        if (lastTransientAt > 0 && now - lastTransientAt < SETTLE_WINDOW_MS) {
-            long since = now - lastTransientAt;
+        // ② 刚从跳板（分享面板/权限弹窗）跳到真实应用：
+        //    这个落点应用是"分享流程的目的地"，整个流程里一律不切换。
+        //    原因：微信的图片发送界面（MsgRetransmitUI）刚起来时拨一次系统开关，
+        //    配置变化会让它重建，重建后图片加载不回来 → 用户看到的是一片空白。
+        //    所以这里什么都不做，等用户真正离开这个应用时再还原。
+        if (lastTransientAt > 0) {
             lastTransientAt = 0;
-            long wait = Math.max(SETTLE_MS - since, 250L);
-            Logx.i("跳转后稳定期，延后 " + wait + "ms 再判定（当前 " + pkg + "）");
-            if (watcher != null) watcher.requestCheckDelayed(wait);
+            if (pkg.equals(appliedPkg)) {
+                Logx.i("回到原应用 " + pkg + "，不切换");
+                return;
+            }
+            chainPkg = pkg;
+            Logx.i("分享/跳转落点 " + pkg + "，流程内保持当前模式");
             return;
+        }
+
+        // 还停在落点应用里：继续不动。换了别的应用才算流程结束。
+        if (chainPkg != null) {
+            if (pkg.equals(chainPkg)) return;
+            Logx.i("已离开落点 " + chainPkg + "（当前 " + pkg + "），恢复正常判定");
+            chainPkg = null;
         }
 
         // ③ 切换冷却：刚拨过就先别拨，等冷却结束再重判，避免事件风暴里反复切换
@@ -319,6 +332,7 @@ public class WatchAccessibilityService extends AccessibilityService {
             boolean back = restoreNight;
             applied = false;
             appliedPkg = null;
+            chainPkg = null;
             saveState();
             stopGuard();
             Logx.i("离开目标应用（" + pkg + "），还原=" + (back ? "深色" : "浅色"));

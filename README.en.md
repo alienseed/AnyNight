@@ -59,11 +59,11 @@ Latest APK: see [Releases](https://github.com/alienseed/AnyNight/releases/latest
 
 Mainland-China mirrors for the same file:
 
-- `https://ghfast.top/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.1.apk`
-- `https://gh-proxy.com/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.1.apk`
-- `https://ghproxy.net/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.1.apk`
+- `https://ghfast.top/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.2.apk`
+- `https://gh-proxy.com/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.2.apk`
+- `https://ghproxy.net/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.2.apk`
 
-The APK is ~322 KB. Package name `com.local.anynight`, version 1.9.1 (versionCode 21). SHA-256 `d3048a75b2d16b649b95d44700b92ed60c23800d4d19ca1498de80c8c1fff11d`.
+The APK is ~322 KB. Package name `com.local.anynight`, version 1.9.2 (versionCode 22). SHA-256 `c3c8f0fb10a863ff628a16f5fb24ec712e5487c27336adf336e46ed4529c9b76`.
 
 > Shizuku itself also needs to come from its official repository — builds delivered by cloud backup, phone-to-phone migration or a vendor app store are often stale or repackaged and fail to pair. The app's built-in guide has the same mirror links.
 

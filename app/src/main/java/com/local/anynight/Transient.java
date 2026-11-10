@@ -22,6 +22,7 @@ final class Transient {
             "com.google.android.permissioncontroller",
             "com.lbe.security.miui",
             "com.miui.securitycenter",
+            "com.miui.securitycore",     // 应用双开 / XSpace 的选择框
             "com.miui.contentextension",
     };
 
