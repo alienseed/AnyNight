@@ -59,11 +59,11 @@ Android 只有一个全局深浅色开关，而且**没有给第三方应用留�
 
 国内可直连的镜像（同一个文件）：
 
-- `https://ghfast.top/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.apk`
-- `https://gh-proxy.com/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.apk`
-- `https://ghproxy.net/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.apk`
+- `https://ghfast.top/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.1.apk`
+- `https://gh-proxy.com/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.1.apk`
+- `https://ghproxy.net/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.1.apk`
 
-安装包约 318 KB，包名 `com.local.anynight`，版本 1.9（versionCode 20）。校验值 SHA-256 `21c1e9f94291a71eb038716d4d4de82c4fa31f6013cb31073ac04ebbad933017`。
+安装包约 322 KB，包名 `com.local.anynight`，版本 1.9.1（versionCode 21）。校验值 SHA-256 `d3048a75b2d16b649b95d44700b92ed60c23800d4d19ca1498de80c8c1fff11d`。
 
 > Shizuku 本身也请从官方仓库下载：云恢复、一键换机、系统应用商店里的版本常常偏旧或被替换，典型表现是能装能开但配对一直失败。应用内的 Shizuku 教程页放了同样的镜像链接。
 

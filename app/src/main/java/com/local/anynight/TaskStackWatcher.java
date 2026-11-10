@@ -169,6 +169,29 @@ final class TaskStackWatcher {
         scheduleCheck();
     }
 
+    /**
+     * 强制重判：先清掉 lastTop 去抖缓存再查一次。
+     *
+     * 用于「先不动、稍后再判定」的场景（分享跳转后的稳定期、切换冷却）。
+     * 普通 requestCheck() 在这里没用——lastTop 已经等于当前前台，
+     * doCheck 会认为没变化而直接返回。
+     */
+    void requestCheckForced() {
+        Handler h = handler;
+        if (h == null || !running) return;
+        h.post(() -> {
+            lastTop = null;
+            checkNow();
+        });
+    }
+
+    /** 延迟 ms 后强制重判一次。 */
+    void requestCheckDelayed(long ms) {
+        Handler h = handler;
+        if (h == null || !running) return;
+        h.postDelayed(this::requestCheckForced, Math.max(0L, ms));
+    }
+
     private void register() {
         if (!running || registered) return;
         boolean ok = NightModeController.registerTaskStackListener(listener);
