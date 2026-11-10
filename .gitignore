@@ -27,3 +27,4 @@ dist/
 release.json
 _make_release_json.py
 _orig_*.png
+_mkrel.py
