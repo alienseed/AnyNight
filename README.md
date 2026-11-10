@@ -1,132 +1,132 @@
-# AnyNight
+# AnyNight · 指定应用深浅化
 
-**Per-app dark / light mode for Android — no root, no Xposed, no repackaging.**
+**给任意 Android 应用单独设置深色 / 浅色，不用 root、不用 Xposed、不改别人的包。**
 
-[中文说明](README.zh-CN.md) · English
+**中文** · [English](README.en.md)
 
-AnyNight flips the system light/dark switch for you: when you open an app you have picked, the whole system goes dark (or light, whichever you chose for it), and the moment you leave, it goes back to how it was.
+你指定哪些应用，AnyNight 就在你进入这些应用时把系统的深浅色开关拨过去，离开时立刻拨回来。系统只有一个总开关，但体验上等于每个应用有了自己的主题。
 
-If this saves you from one blinding white screen at 2 a.m., a ⭐ helps other people find it.
+如果它帮你少看了一次半夜的白屏，**点个 Star** 能让更多需要的人找到它。
 
 <p align="center">
-  <img src="docs/home-en.png" width="240" alt="Home">
-  <img src="docs/picker.png" width="240" alt="Choose apps">
-  <img src="docs/guide.png" width="240" alt="Guide">
+  <img src="docs/home-zh.png" width="240" alt="首页">
+  <img src="docs/picker-zh.png" width="240" alt="选择应用">
+  <img src="docs/guide.png" width="240" alt="使用教程">
 </p>
 
 ---
 
-## Why this exists
+## 为什么需要它
 
-Android has **one** global dark-mode switch and **no public API** for a third-party app to flip it. Some ROMs ship a per-app dark-mode list; many do not, and plenty of apps ignore the system anyway. So the only reliable, non-root way to give a single app its own theme is: borrow shell access through [Shizuku](https://github.com/RikkaApps/Shizuku) and flip the global switch while that app is in front.
+Android 只有一个全局深浅色开关，而且**没有给第三方应用留下切换它的公开接口**。部分国产系统自带「按应用深色」列表，更多系统没有；而且不少应用根本不跟随系统。
 
-That is exactly what AnyNight does — cleanly, and only while you are inside the apps you selected.
+所以不 root 的唯一可靠办法是：借 [Shizuku](https://github.com/RikkaApps/Shizuku) 拿到 shell 权限，在目标应用位于前台时拨一下全局开关。AnyNight 做的就是这件事，而且只在你选中的应用里做。
 
-## Features
+## 功能
 
-- **Per-app direction** — mark an app *dark* (turn the system dark when it opens) or *light* (turn it light), independently. Both directions work at the same time.
-- **Automatic and instant** — event-driven foreground detection (task-stack listener + accessibility + process observer), typically ~50–100 ms from launch to switch.
-- **Restores on exit** — leaving the app restores exactly the mode you were in before.
-- **Zero polling when idle** — no timers, no wake-ups; 0 CPU while nothing is happening.
-- **Double-language UI** — follows the system language, with a one-tap switch (中文 / ENGLISH) at the bottom of the home screen.
-- **Overlay hint** — an optional pill over the app saying “switched by AnyNight”, so you can tell our change from an app's own dark mode.
-- **Fail-safe** — one-tap restore, automatic reconciliation after a crash or reinstall, a 45 s watchdog while a change is applied, and a 5-second self-reverting test.
-- **Read-only compatibility report** — ROM, Android version, Shizuku state, whether night mode is locked, whether per-app dark mode exists; exportable as a zip.
-- **No network. No analytics. No data collection.**
+- **每个应用单独指定方向** —— 标记为「深色化」的应用进入时把系统切深，标记为「浅色化」的切浅，两个方向可以同时存在。
+- **自动、即时** —— 事件驱动的前台识别（任务栈监听 + 无障碍 + 进程观察），从启动到切换通常 50~100ms。
+- **离开就还原** —— 还原成你进入之前的那一档，不会留下改过的状态。
+- **空闲零轮询** —— 没有定时器、不唤醒；没事发生时 CPU 占用为 0。
+- **中英双语界面** —— 跟随系统语言，首页底部一键切换（中文 / ENGLISH）。
+- **切换提示** —— 可在对方应用上显示一条小提示，说明「这次是 AnyNight 干的」，避免和它自带的深色开关混淆。
+- **兜底完整** —— 首页一键还原、进程被杀后自动对账、改动期间 45 秒看门狗、5 秒自动还原的测试。
+- **只读兼容性报告** —— ROM、Android 版本、Shizuku 状态、夜间模式是否被锁定、系统有没有按应用深色，可导出 zip。
+- **不联网、不统计、不收集任何数据。**
 
-## How it works
+## 工作原理
 
-| Piece | What it does |
+| 模块 | 作用 |
 |---|---|
-| `NightModeController` | Talks to `IUiModeManager` through Shizuku: binder transaction first, `cmd uimode night yes/no` as fallback. |
-| `TaskStackWatcher` | Foreground detection: `registerTaskStackListener` as the trigger, `getTasks` to resolve the package, accessibility and process-observer events as extra sources. |
-| `WatchAccessibilityService` | Decides what to do on entry/exit, persists the pre-change state, applies and restores. |
-| `I18n` | Tiny text layer: Chinese strings are the dictionary keys, English is looked up; missing entries fall back to Chinese instead of breaking. |
-| `CheckActivity` | Strictly read-only diagnostics — it never toggles anything, so it cannot flicker. |
+| `NightModeController` | 通过 Shizuku 调 `IUiModeManager`：优先 binder 事务，失败回落 `cmd uimode night yes/no`。 |
+| `TaskStackWatcher` | 前台识别：`registerTaskStackListener` 作触发，`getTasks` 取包名，无障碍与进程观察事件作补充。 |
+| `WatchAccessibilityService` | 进入/离开的判定、持久化改动前的状态、执行与还原。 |
+| `I18n` | 极简文案层：中文原文作 key，命中字典返回英文，漏译退回中文而不是显示 key。 |
+| `CheckActivity` | 严格只读的诊断页，不写任何设置，因此不可能闪屏。 |
 
-There is no per-app magic: the *system* switch is what changes. Everything on screen — including the system UI — follows it for those few seconds. What makes it feel per-app is that the switch is only flipped while you are inside the app you picked.
+这里没有 per-app 的魔法：真正变化的是**系统的**开关。所以那几秒里系统界面也会跟着变——这正是它能生效的原因。让它「像 per-app」的是：只在你在那个应用里的时候才拨。
 
-## Requirements
+## 环境要求
 
-- **Android 11 or newer** (API 30+). Android 13+ recommended.
-- **[Shizuku](https://github.com/RikkaApps/Shizuku/releases)** installed, running, and AnyNight authorised inside it.
-- **Accessibility service** enabled for AnyNight (this keeps the detection alive on ROMs that freeze background processes).
-- On aggressive ROMs (HyperOS / MIUI, ColorOS, OriginOS…): **battery mode “no restrictions”**.
+- **Android 11 及以上**（API 30+），建议 Android 13+。
+- **[Shizuku](https://github.com/RikkaApps/Shizuku/releases)** 已安装、已启动，并在其中给 AnyNight 授权。
+- 开启 AnyNight 的**无障碍服务**（在会冻结后台的系统上，它负责让检测线程活着）。
+- 系统较为激进时（HyperOS / MIUI、ColorOS、OriginOS 等）：把**省电策略设为「无限制」**。
 
-## Download
+## 下载
 
-Latest APK: see [Releases](../../releases/latest).
+最新安装包见 [Releases](../../releases/latest)。
 
-Mainland-China mirrors for the same file:
+国内可直连的镜像（同一个文件）：
 
-- `https://ghfast.top/https://github.com/{{REPO}}/releases/latest/download/app-v1.9.apk`
-- `https://gh-proxy.com/https://github.com/{{REPO}}/releases/latest/download/app-v1.9.apk`
+- `https://ghfast.top/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.apk`
+- `https://gh-proxy.com/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.apk`
 
-The APK is ~320 KB. Package name `com.local.anynight`, version 1.9 (versionCode 20).
+安装包约 320 KB，包名 `com.local.anynight`，版本 1.9（versionCode 20）。
 
-> Shizuku itself also needs to come from its official repository — builds delivered by cloud backup, phone-to-phone migration or a vendor app store are often stale or repackaged and fail to pair. The app's built-in guide has the same mirror links.
+> Shizuku 本身也请从官方仓库下载：云恢复、一键换机、系统应用商店里的版本常常偏旧或被替换，典型表现是能装能开但配对一直失败。应用内的 Shizuku 教程页放了同样的镜像链接。
 
-## Quick start
+## 快速上手
 
-1. Install Shizuku from the official releases and start it (wireless debugging → pair → start).
-2. In Shizuku → *Authorized apps*, enable **AnyNight**.
-3. Open AnyNight → grant Shizuku access → enable the accessibility service.
-4. **Target apps** → tap the apps you want; use the *Darken / Lighten* segments to choose the direction per app.
-5. On aggressive ROMs, set battery to *no restrictions* and allow autostart. The in-app **Guide** walks through it, with buttons that jump straight to the right system page.
+1. 从官方 Releases 安装 Shizuku 并启动（无线调试 → 配对 → 启用）。
+2. 在 Shizuku 的「应用管理」里给 **AnyNight** 打开开关。
+3. 打开 AnyNight → 授权 Shizuku → 开启无障碍服务。
+4. **指定应用** → 点选应用；顶部用【深色化 / 浅色化】决定这个应用要哪个方向。
+5. 系统较激进的话，把省电策略设为「无限制」并允许自启动。应用内的**使用教程**逐步带你做，按钮会直接跳到对应系统页面。
 
-Then just use your phone. Enter a picked app → it changes; leave → it changes back.
+之后正常用手机即可：进入选中的应用就变，离开就还原。
 
-## If an app does not change
+## 应用没变色的排查顺序
 
-Check these in order — the same list is in the app under **Guide → App did not go dark?**
+应用内「使用教程 → 应用进入后没变深？」里也是这三步：
 
-1. **The app itself must follow the system.** Many apps have their own light/dark switch and default to “always light”. Set it to *Follow system* — in Xiaohongshu that is *Me → Settings → General → Dark mode → Follow system*; most apps hide it under *Settings → Display / Appearance*.
-2. **The system may have a per-app dark list.** *Settings → Dark mode → Per-app settings* — if the app is listed there, force it on.
-3. **The app may have no dark UI at all.** If neither of the above exists, nothing can make it dark; remove it from the list.
+1. **应用自己得跟随系统。** 很多应用有自己的深色开关，默认「始终浅色」。要在应用内选「跟随系统」——小红书是「我 → 设置 → 通用 → 深色模式 → 跟随系统」；多数应用在「设置 → 显示 / 外观」里。
+2. **系统可能自带按应用深色。** 「设置 → 深色模式 → 应用单独设置」里有它，就打开强制变深。
+3. **应用可能根本没有深色界面。** 两边都没有，就谁也变不了，建议从清单里移出。
 
-## Notes and honest limits
+## 说明与限制（实话）
 
-- **The whole system flips**, including the status bar and the launcher, for as long as you are inside the target app. That is unavoidable without root: there is only one switch.
-- **Shizuku stops after a reboot.** Re-open Shizuku and tap *Start* (no re-pairing needed).
-- **Some ROMs freeze background apps.** If switching stops working after a while, battery mode is almost always the cause — set it to *no restrictions*.
-- **Timing.** The switch happens after the app comes to the front, so a very fast first frame may still be drawn in the old theme for ~100 ms.
-- **Not for HarmonyOS NEXT or iOS.** HarmonyOS NEXT has no APK/Shizuku model; iOS exposes no API for a third-party app to change the global appearance.
+- **整机都会变**，包括状态栏和桌面图标，持续时间等于你在目标应用里的时间。不 root 就没有第二个开关可用，这是机制决定的。
+- **重启手机后 Shizuku 会失效**，重新打开 Shizuku 点「启用」即可，不用重新配对。
+- **部分系统会冻结后台**。如果用了几天后突然不灵，九成是省电策略，改成「无限制」。
+- **有一点点延迟**。切换发生在应用来到前台之后，极快的首帧可能仍是旧主题，约 100ms。
+- **鸿蒙 NEXT 与 iOS 不支持**。鸿蒙 NEXT 没有 APK / Shizuku 这套模型；iOS 没有给第三方修改全局外观的接口。
 
-## Safety
+## 安全性
 
-Changing the global appearance could, in theory, leave the system in the “wrong” mode. AnyNight handles that from several directions:
+改全局外观理论上可能把系统留在「错误」的一档，所以做了几层兜底：
 
-- state is persisted; if the process is killed, the accessibility service reconciles on restart;
-- a 45-second watchdog re-checks while a change is applied;
-- turning the master switch off restores immediately;
-- **Appearance stuck? Reset** on the home screen always works;
-- the built-in test asks for confirmation, runs for 5 seconds, and reverts by itself.
+- 改动前的状态会持久化，进程被杀后无障碍服务一启动就按当前前台对账还原；
+- 改动期间每 45 秒一次看门狗核对；
+- 关掉总开关立刻还原；
+- 首页「系统外观卡住？一键还原」永远可用；
+- 内置测试会先弹确认、只切 5 秒、自己还原。
 
-## Build from source
+## 从源码构建
 
 ```bash
-# JDK 17, Android SDK 35, Gradle 8.9
+# JDK 17、Android SDK 35、Gradle 8.9
 gradle assembleRelease
 ```
 
-`minSdk 30`, `compileSdk 35`, AGP 8.5.2, Java 17. Only two dependencies: `dev.rikka.shizuku:api` and `:provider`.
+`minSdk 30`、`compileSdk 35`、AGP 8.5.2、Java 17。依赖只有两个：`dev.rikka.shizuku:api` 与 `:provider`。
 
-## Compatibility
+## 兼容性
 
-Developed and verified on a Xiaomi 17 Ultra (HyperOS 4.0.7.0, Android 17, SDK 37). The mechanism only relies on AOSP interfaces (`IUiModeManager`, task-stack listener, accessibility), so other Android 11+ devices should work — but vendor ROMs vary.
+主要开发与验证机型：小米 17 Ultra（HyperOS 4.0.7.0 / Android 17 / SDK 37）。机制只依赖 AOSP 接口（`IUiModeManager`、任务栈监听、无障碍），所以 Android 11+ 理论上都可用，但国产 ROM 差异很大。
 
-If something misbehaves, open **Compatibility** in the app, tap **Export report**, and attach the zip to an issue. It contains the ROM, the detected capabilities and the switch log — far more useful than a description.
+遇到问题请打开应用内**兼容性信息**页，点**导出报告**，把 zip 附到 issue 里。里面是 ROM、探测到的能力和切换日志，比描述现象有用得多。
 
-## Privacy
+## 隐私
 
-No internet permission. No analytics, no crash reporting, no accounts. Logs stay in the app's private storage until you export them.
+没有联网权限。没有统计、没有崩溃上报、没有账号。日志只存在应用私有目录，直到你主动导出。
 
-## License
+## 许可
 
 [MIT](LICENSE) © alienleung
 
-## Contact
+## 联系作者
 
-alienleung@foxmail.com — email is the most reliable channel; attaching an exported log saves a lot of back-and-forth.
+alienleung@foxmail.com —— 邮件最稳妥，附上导出的日志能省掉很多来回问。
 
-If AnyNight is useful to you, **a star is the best thank-you** — it is what decides whether the next person ever finds this.
+如果 AnyNight 对你有用，**一个 Star 就是最好的回礼**：它决定了下一个人能不能找到这里。
