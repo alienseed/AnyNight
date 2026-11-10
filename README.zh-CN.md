@@ -59,8 +59,8 @@ Android 只有一个全局深浅色开关，而且**没有给第三方应用留�
 
 国内可直连的镜像（同一个文件）：
 
-- `https://ghfast.top/https://github.com/{{REPO}}/releases/latest/download/app-v1.9.apk`
-- `https://gh-proxy.com/https://github.com/{{REPO}}/releases/latest/download/app-v1.9.apk`
+- `https://ghfast.top/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.apk`
+- `https://gh-proxy.com/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.apk`
 
 安装包约 320 KB，包名 `com.local.anynight`，版本 1.9（versionCode 20）。
 
