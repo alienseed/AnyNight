@@ -22,3 +22,8 @@ dist/
 # Scratch files
 *.log
 *.png.bak
+
+# 本地发布用临时文件
+release.json
+_make_release_json.py
+_orig_*.png
