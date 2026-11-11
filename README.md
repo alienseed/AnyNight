@@ -31,8 +31,8 @@ Android 只有一个全局深浅色开关，而且**没有给第三方应用留�
 - **中英双语界面** —— 跟随系统语言，首页底部一键切换（中文 / ENGLISH）。
 - **切换提示** —— 可在对方应用上显示一条小提示，说明「这次是 AnyNight 干的」，避免和它自带的深色开关混淆。
 - **兜底完整** —— 首页一键还原、进程被杀后自动对账、改动期间 45 秒看门狗、5 秒自动还原的测试。
-- **只读兼容性报告** —— ROM、Android 版本、Shizuku 状态、夜间模式是否被锁定、系统有没有按应用深色，可导出 zip。
-- **不联网、不统计、不收集任何数据。**
+- **只读兼容性报告** —— ROM、Android 版本、Shizuku 状态、夜间模式是否被锁定、系统有没有按应用深色，可导出 zip；页面底部还能检查更新（走国内可用的镜像线路）。
+- **不统计、不上传任何数据。** 唯一的联网动作是你在「兼容性信息」里主动点「检查更新」时，去 GitHub 取一次版本号。
 
 ## 工作原理
 
@@ -59,11 +59,11 @@ Android 只有一个全局深浅色开关，而且**没有给第三方应用留�
 
 国内可直连的镜像（同一个文件）：
 
-- `https://ghfast.top/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.2.apk`
-- `https://gh-proxy.com/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.2.apk`
-- `https://ghproxy.net/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.2.apk`
+- `https://ghfast.top/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.4.apk`
+- `https://gh-proxy.com/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.4.apk`
+- `https://ghproxy.net/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.4.apk`
 
-安装包约 322 KB，包名 `com.local.anynight`，版本 1.9.2（versionCode 22）。校验值 SHA-256 `c3c8f0fb10a863ff628a16f5fb24ec712e5487c27336adf336e46ed4529c9b76`。
+安装包约 344 KB，包名 `com.local.anynight`，版本 1.9.4（versionCode 29）。校验值 SHA-256 `059d3159ac0ff15f00679ddc0a620a5e34f02bd702553d899a7e0bad09f6fe06`。
 
 > Shizuku 本身也请从官方仓库下载：云恢复、一键换机、系统应用商店里的版本常常偏旧或被替换，典型表现是能装能开但配对一直失败。应用内的 Shizuku 教程页放了同样的镜像链接。
 
@@ -116,11 +116,11 @@ gradle assembleRelease
 
 主要开发与验证机型：小米 17 Ultra（HyperOS 4.0.7.0 / Android 17 / SDK 37）。机制只依赖 AOSP 接口（`IUiModeManager`、任务栈监听、无障碍），所以 Android 11+ 理论上都可用，但国产 ROM 差异很大。
 
-遇到问题请打开应用内**兼容性信息**页，点**导出报告**，把 zip 附到 issue 里。里面是 ROM、探测到的能力和切换日志，比描述现象有用得多。
+遇到问题请打开应用内**兼容性信息**页，点**导出日志**，把 zip 附到 issue 里。里面是 ROM、探测到的能力和切换日志，比描述现象有用得多。
 
 ## 隐私
 
-没有联网权限。没有统计、没有崩溃上报、没有账号。日志只存在应用私有目录，直到你主动导出。
+没有统计、没有崩溃上报、没有账号，也不上传任何数据。唯一的网络请求是「检查更新」：只有你主动点它时，才会向 GitHub（或国内镜像）取一次版本号；不点就不联网。日志只存在应用私有目录，直到你主动导出。
 
 ## 许可
 

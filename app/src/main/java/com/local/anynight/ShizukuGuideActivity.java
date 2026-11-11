@@ -180,20 +180,6 @@ public class ShizukuGuideActivity extends Activity {
         addLinkRow(dl, tr("加速镜像 1（ghfast.top）"), MIRROR_1, tr("国内一般可直连"));
         addLinkRow(dl, tr("加速镜像 2（gh-proxy.com）"), MIRROR_2, tr("上面那个不通时用"));
 
-        TextView copy = text(tr("复制全部链接"), 11.5f, color(R.color.accent_text), true);
-        copy.setGravity(Gravity.CENTER);
-        copy.setPadding(dp(14), dp(8), dp(14), dp(8));
-        copy.setBackground(shape(color(R.color.accent), 14));
-        copy.setOnClickListener(v -> {
-            copyToClipboard("GitHub: " + GITHUB + tr("\n镜像1: ") + MIRROR_1
-                    + tr("\n镜像2: ") + MIRROR_2);
-            toast(tr("链接已复制，可发到电脑或浏览器打开"));
-        });
-        LinearLayout.LayoutParams copyLp = lp(ViewGroup.LayoutParams.WRAP_CONTENT, dp(34));
-        copyLp.topMargin = dp(10);
-        copyLp.bottomMargin = dp(6);
-        copyLp.leftMargin = dp(10);
-        dl.addView(copy, copyLp);
 
         LinearLayout.LayoutParams dlLp = lp(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -206,8 +192,29 @@ public class ShizukuGuideActivity extends Activity {
         steps.setPadding(dp(16), dp(14), dp(16), dp(14));
         steps.setBackground(shapeStroked(color(R.color.card), 18, color(R.color.card_stroke)));
 
-        steps.addView(text(tr("启用步骤（以小米 / 澎湃OS 为例）"), 14.5f,
-                color(R.color.text_primary), true));
+        LinearLayout stepsHead = new LinearLayout(this);
+        stepsHead.setOrientation(LinearLayout.HORIZONTAL);
+        stepsHead.setGravity(Gravity.CENTER_VERTICAL);
+
+        TextView stepsTitle = text(tr("启用步骤（以小米 / 澎湃OS 为例）"), 14,
+                color(R.color.text_primary), true);
+        LinearLayout.LayoutParams stepsTitleLp = lp(0, ViewGroup.LayoutParams.WRAP_CONTENT);
+        stepsTitleLp.weight = 1;
+        stepsHead.addView(stepsTitle, stepsTitleLp);
+
+        TextView copyAll = text(tr("复制全部"), 10.5f, color(R.color.accent_text), true);
+        copyAll.setGravity(Gravity.CENTER);
+        copyAll.setPadding(dp(10), 0, dp(10), 0);
+        copyAll.setBackground(shape(color(R.color.accent), 12));
+        copyAll.setOnClickListener(v -> {
+            copyToClipboard(stepsAsText());
+            toast(tr("全部步骤已复制，可直接粘贴"));
+        });
+        LinearLayout.LayoutParams copyAllLp = lp(ViewGroup.LayoutParams.WRAP_CONTENT, dp(27));
+        copyAllLp.leftMargin = dp(6);
+        stepsHead.addView(copyAll, copyAllLp);
+
+        steps.addView(stepsHead);
 
         for (int i = 0; i < STEPS.length; i++) {
             LinearLayout row = new LinearLayout(this);
@@ -227,6 +234,7 @@ public class ShizukuGuideActivity extends Activity {
             bodyLp.weight = 1;
             bodyLp.leftMargin = dp(9);
             row.addView(body, bodyLp);
+
 
             LinearLayout.LayoutParams rowLp = lp(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -310,7 +318,27 @@ public class ShizukuGuideActivity extends Activity {
         LinearLayout.LayoutParams tLp = lp(0, ViewGroup.LayoutParams.WRAP_CONTENT);
         tLp.weight = 1;
         top.addView(tv, tLp);
-        top.addView(text(tr("打开 ›"), 11, color(R.color.text_tertiary), false));
+
+        // 右侧两个小按钮：复制这条链接 / 直接用浏览器打开
+        TextView cp = text(tr("复制"), 10.5f, color(R.color.text_tertiary), true);
+        cp.setGravity(Gravity.CENTER);
+        cp.setPadding(dp(9), 0, dp(9), 0);
+        cp.setBackground(shapeStroked(color(R.color.card), 11, color(R.color.card_stroke)));
+        cp.setOnClickListener(v -> {
+            copyToClipboard(url);
+            toast(tr("链接已复制"));
+        });
+        top.addView(cp, lp(ViewGroup.LayoutParams.WRAP_CONTENT, dp(24)));
+
+        TextView op = text(tr("打开"), 10.5f, color(R.color.accent_text), true);
+        op.setGravity(Gravity.CENTER);
+        op.setPadding(dp(9), 0, dp(9), 0);
+        op.setBackground(shape(color(R.color.accent), 11));
+        op.setOnClickListener(v -> openUrl(url));
+        LinearLayout.LayoutParams opLp = lp(ViewGroup.LayoutParams.WRAP_CONTENT, dp(24));
+        opLp.leftMargin = dp(6);
+        top.addView(op, opLp);
+
         row.addView(top);
 
         TextView n = text(note, 10.5f, color(R.color.text_tertiary), false);
@@ -319,16 +347,7 @@ public class ShizukuGuideActivity extends Activity {
         nLp.topMargin = dp(2);
         row.addView(n, nLp);
 
-        row.setOnClickListener(v -> {
-            try {
-                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(i);
-            } catch (Throwable t) {
-                copyToClipboard(url);
-                toast(tr("没有浏览器，链接已复制"));
-            }
-        });
+        row.setOnClickListener(v -> openUrl(url));
         row.setOnLongClickListener(v -> {
             copyToClipboard(url);
             toast(tr("链接已复制"));
@@ -347,6 +366,30 @@ public class ShizukuGuideActivity extends Activity {
             if (cm != null) cm.setPrimaryClip(ClipData.newPlainText("AnyNight", s));
         } catch (Throwable ignored) {
         }
+    }
+
+    /** 用浏览器打开；没有浏览器就把链接复制走。 */
+    private void openUrl(String url) {
+        try {
+            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(i);
+        } catch (Throwable t) {
+            copyToClipboard(url);
+            toast(tr("没有浏览器，链接已复制"));
+        }
+    }
+
+    /** 把标题、七个步骤和提示拼成一段纯文本，方便贴到别处对照操作。 */
+    private String stepsAsText() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(tr("启用步骤（以小米 / 澎湃OS 为例）")).append("\n");
+        for (int i = 0; i < STEPS.length; i++) {
+            sb.append(i + 1).append(". ").append(tr(STEPS[i])).append("\n");
+        }
+        sb.append("\n").append(tr("提示：重启手机后 Shizuku 会失效，需要重新点一次「启用」"))
+                .append(tr("（不用重新配对，无线调试会记住）。"));
+        return sb.toString();
     }
 
     private void toast(String s) {

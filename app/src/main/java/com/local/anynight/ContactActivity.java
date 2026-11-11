@@ -166,21 +166,34 @@ public class ContactActivity extends Activity {
 
         card.addView(text(tr("作者邮箱"), 12, color(R.color.text_tertiary), true));
 
-        TextView mail = text(AUTHOR_EMAIL, 17, color(R.color.text_primary), true);
-        mail.setPadding(dp(14), dp(12), dp(14), dp(12));
-        mail.setBackground(shape(color(R.color.chip_bg), 14));
-        mail.setGravity(Gravity.CENTER);
-        mail.setOnClickListener(v -> copyMail());
-        mail.setOnLongClickListener(v -> {
-            copyMail();
-            return true;
-        });
-        LinearLayout.LayoutParams mailLp = lp(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        mailLp.topMargin = dp(8);
-        card.addView(mail, mailLp);
+        // 左侧明文可长按选中复制，右侧给一个明确的复制按钮
+        LinearLayout mailRow = new LinearLayout(this);
+        mailRow.setOrientation(LinearLayout.HORIZONTAL);
+        mailRow.setGravity(Gravity.CENTER_VERTICAL);
+        mailRow.setPadding(dp(14), dp(2), dp(6), dp(2));
+        mailRow.setBackground(shape(color(R.color.chip_bg), 14));
 
-        TextView hint = text(tr("点按或长按即可复制"), 11, color(R.color.text_tertiary), false);
+        TextView mail = text(AUTHOR_EMAIL, 15.5f, color(R.color.text_primary), true);
+        mail.setTextIsSelectable(true);
+        mail.setPadding(0, dp(11), 0, dp(11));
+        LinearLayout.LayoutParams mailLp = lp(0, ViewGroup.LayoutParams.WRAP_CONTENT);
+        mailLp.weight = 1;
+        mailRow.addView(mail, mailLp);
+
+        TextView copy = text(tr("复制"), 11.5f, color(R.color.accent_text), true);
+        copy.setGravity(Gravity.CENTER);
+        copy.setPadding(dp(13), 0, dp(13), 0);
+        copy.setBackground(shape(color(R.color.accent), 13));
+        copy.setOnClickListener(v -> copyMail());
+        mailRow.addView(copy, lp(ViewGroup.LayoutParams.WRAP_CONTENT, dp(30)));
+
+        LinearLayout.LayoutParams mailRowLp = lp(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        mailRowLp.topMargin = dp(8);
+        card.addView(mailRow, mailRowLp);
+
+        TextView hint = text(tr("长按邮箱可选中，或点右侧「复制」"), 11,
+                color(R.color.text_tertiary), false);
         hint.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams hintLp = lp(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -204,7 +217,7 @@ public class ContactActivity extends Activity {
 
         TextView desc = text(tr("日志记录切换时间、目标应用、开关结果和崩溃堆栈，")
                 + tr("外加系统版本与机型，不含照片和任何账户信息。")
-                + tr("导出为 zip 存到「下载/AnyNight」，发邮件时把它作为附件即可。"),
+                + tr("导出为 zip，存在系统「下载」根目录（文件名以 AnyNight 开头），发邮件时作为附件即可。"),
                 12, color(R.color.text_secondary), false);
         desc.setLineSpacing(dp(3), 1f);
         LinearLayout.LayoutParams descLp = lp(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -234,16 +247,10 @@ public class ContactActivity extends Activity {
         card.setPadding(dp(16), dp(14), dp(16), dp(14));
         card.setBackground(shape(color(R.color.chip_bg), 18));
 
-        card.addView(text(tr("关于捐献与回复"), 12.5f, color(R.color.text_primary), true));
-
-        TextView body = text(tr("本软件免费使用全部功能，是否捐献不影响其性质，")
-                + tr("作者也无法承诺是否或多久回复你的联系。"), 12,
-                color(R.color.text_secondary), false);
+        TextView body = text(tr("感谢你的反馈，但作者无法承诺是否回复或多久回复。"),
+                12.5f, color(R.color.text_secondary), false);
         body.setLineSpacing(dp(3), 1f);
-        LinearLayout.LayoutParams bodyLp = lp(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        bodyLp.topMargin = dp(7);
-        card.addView(body, bodyLp);
+        card.addView(body);
 
         LinearLayout.LayoutParams cardLp = lp(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);

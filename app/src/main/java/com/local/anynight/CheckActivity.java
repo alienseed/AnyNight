@@ -1,6 +1,7 @@
 package com.local.anynight;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
@@ -40,6 +41,8 @@ public class CheckActivity extends Activity {
 
     private final List<TextView> values = new ArrayList<>();
     private TextView conclusion;
+    private TextView updateBtn;
+    private boolean checking;
 
     @Override
     protected void attachBaseContext(android.content.Context base) {
@@ -201,7 +204,7 @@ public class CheckActivity extends Activity {
         View gap = new View(this);
         btnRow.addView(gap, lp(dp(10), dp(1)));
 
-        TextView export = text(tr("导出报告"), 13, color(R.color.accent_text), true);
+        TextView export = text(tr("导出日志"), 13, color(R.color.accent_text), true);
         export.setGravity(Gravity.CENTER);
         export.setBackground(shape(color(R.color.accent), 16));
         export.setOnClickListener(v -> exportReport());
@@ -211,7 +214,17 @@ public class CheckActivity extends Activity {
 
         page.addView(btnRow, btnRowLp);
 
-        TextView note = text(tr("报告写到「下载/AnyNight」，里面是设备信息、运行日志和这次读取到的状态。")
+        // 检查更新：放在这里，和「导出报告」同属「维护」动作
+        updateBtn = text(tr("检查更新") + " · v" + Update.localVersion(), 13,
+                color(R.color.text_primary), true);
+        updateBtn.setGravity(Gravity.CENTER);
+        updateBtn.setBackground(shapeStroked(color(R.color.card), 16, color(R.color.card_stroke)));
+        updateBtn.setOnClickListener(v -> checkUpdate());
+        LinearLayout.LayoutParams updateLp = lp(ViewGroup.LayoutParams.MATCH_PARENT, dp(40));
+        updateLp.topMargin = dp(10);
+        page.addView(updateBtn, updateLp);
+
+        TextView note = text(tr("报告写到系统「下载」根目录（AnyNight 开头），里面是设备信息、运行日志和这次读取到的状态。")
                 + tr("用着不对的时候把它发给作者，比描述现象有用得多。"),
                 11, color(R.color.text_tertiary), false);
         note.setLineSpacing(dp(3), 1f);
@@ -219,6 +232,15 @@ public class CheckActivity extends Activity {
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         noteLp.topMargin = dp(10);
         page.addView(note, noteLp);
+
+        // 联系作者：放在这里，出问题的人本来就会先打开这个页面
+        TextView contact = text(tr("联系作者"), 13, color(R.color.text_secondary), true);
+        contact.setGravity(Gravity.CENTER);
+        contact.setBackground(shapeStroked(color(R.color.card), 16, color(R.color.card_stroke)));
+        contact.setOnClickListener(v -> startActivity(new Intent(this, ContactActivity.class)));
+        LinearLayout.LayoutParams contactLp = lp(ViewGroup.LayoutParams.MATCH_PARENT, dp(40));
+        contactLp.topMargin = dp(12);
+        page.addView(contact, contactLp);
 
         ScrollView scroll = new ScrollView(this);
         scroll.setFillViewport(true);
@@ -311,10 +333,110 @@ public class CheckActivity extends Activity {
                 String path = Logx.exportZip(this);
                 runOnUiThread(() -> toast(tr("已导出到 ") + path));
             } catch (Throwable t) {
-                Logx.e(tr("导出报告失败"), t);
+                Logx.e(tr("导出日志失败"), t);
                 runOnUiThread(() -> toast(tr("导出失败：") + t.getMessage()));
             }
         }).start();
+    }
+
+    // ---------------- 检查更新 ----------------
+
+    private void checkUpdate() {
+        if (checking || updateBtn == null) return;
+        checking = true;
+        updateBtn.setText(tr("正在检查…"));
+        Update.check(this, (info, err) -> {
+            checking = false;
+            if (updateBtn != null) {
+                updateBtn.setText(tr("检查更新") + " · v" + Update.localVersion());
+            }
+            if (info == null) {
+                toast(tr("检查失败，网络不通或代理不可用"));
+                Logx.w("检查更新失败: " + err);
+                return;
+            }
+            if (!Update.isNewer(info.version, Update.localVersion())) {
+                toast(tr("已是最新版本 v") + Update.localVersion());
+                return;
+            }
+            askDownload(info);
+        });
+    }
+
+    private void askDownload(Update.Info info) {
+        new android.app.AlertDialog.Builder(this)
+                .setTitle(tr("发现新版本 v") + info.version)
+                .setMessage(tr("当前 v") + Update.localVersion()
+                        + tr("。下载后可直接覆盖安装，设置和已选应用都会保留。"))
+                .setNegativeButton(tr("以后再说"), null)
+                .setPositiveButton(tr("下载"), (d, w) -> startDownload(info))
+                .show();
+    }
+
+    private void startDownload(Update.Info info) {
+        android.widget.ProgressBar bar = new android.widget.ProgressBar(
+                this, null, android.R.attr.progressBarStyleHorizontal);
+        bar.setMax(100);
+        int pad = dp(22);
+        LinearLayout box = new LinearLayout(this);
+        box.setOrientation(LinearLayout.VERTICAL);
+        box.setPadding(pad, dp(8), pad, 0);
+        box.addView(bar, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(this)
+                .setTitle(tr("正在下载 v") + info.version)
+                .setView(box)
+                .setCancelable(false)
+                .create();
+        try {
+            dialog.show();
+        } catch (Throwable ignored) {
+        }
+
+        Update.download(this, info, new Update.DownloadCallback() {
+            @Override
+            public void progress(int percent) {
+                bar.setProgress(percent);
+            }
+
+            @Override
+            public void done(java.io.File apk, String error) {
+                try {
+                    dialog.dismiss();
+                } catch (Throwable ignored) {
+                }
+                if (apk == null) {
+                    toast(tr("下载失败：") + (error == null ? tr("网络错误") : error));
+                    return;
+                }
+                install(apk);
+            }
+        });
+    }
+
+    private void install(java.io.File apk) {
+        if (android.os.Build.VERSION.SDK_INT >= 26
+                && !getPackageManager().canRequestPackageInstalls()) {
+            toast(tr("请先允许本应用安装应用"));
+            try {
+                startActivity(new android.content.Intent(
+                        android.provider.Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
+                        android.net.Uri.parse("package:" + getPackageName())));
+            } catch (Throwable ignored) {
+            }
+            return;
+        }
+        try {
+            android.net.Uri uri = ApkProvider.uriFor(this, apk);
+            android.content.Intent i = new android.content.Intent(android.content.Intent.ACTION_VIEW)
+                    .setDataAndType(uri, "application/vnd.android.package-archive")
+                    .addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
+                            | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(i);
+        } catch (Throwable t) {
+            toast(tr("无法启动安装：") + t.getMessage());
+        }
     }
 
     private void toast(String s) {

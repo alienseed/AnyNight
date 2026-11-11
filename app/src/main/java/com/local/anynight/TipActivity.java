@@ -137,7 +137,7 @@ public class TipActivity extends Activity {
         card.addView(title, lp(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        TextView sub = text(tr("微信扫码，请我喝瓶大水"), 12,
+        TextView sub = text(tr("微信扫码，长按图片可保存到相册"), 13,
                 color(R.color.text_secondary), false);
         sub.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams subLp = lp(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -188,16 +188,10 @@ public class TipActivity extends Activity {
                 ViewGroup.LayoutParams.WRAP_CONTENT));
         card.addView(frame, imgLp);
 
-        TextView hint = text(tr("长按图片可保存到相册"), 11.5f,
-                color(R.color.text_tertiary), false);
-        hint.setGravity(Gravity.CENTER);
-        LinearLayout.LayoutParams hintLp = lp(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        hintLp.topMargin = dp(11);
-        card.addView(hint, hintLp);
-
-        TextView terms = text(tr("「请喝大水」为捐献性质，金额随意，任何理由均不支持退费。"),
-                10.5f, color(R.color.text_tertiary), false);
+        // 顶部那句已经写了「长按图片可保存到相册」，这里不再重复
+        TextView terms = text(tr("此为捐献性质，金额随意，无法退费，非常感谢您的捐献！"
+                        + "本软件为作者失业在家开发，捐献不构成软件盈利，软件仍为免费使用全部功能。"),
+                11.5f, color(R.color.text_tertiary), false);
         terms.setGravity(Gravity.CENTER);
         terms.setLineSpacing(dp(2), 1f);
         LinearLayout.LayoutParams termsLp = lp(ViewGroup.LayoutParams.MATCH_PARENT,

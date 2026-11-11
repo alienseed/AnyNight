@@ -130,7 +130,7 @@ final class Logx {
     // ---------------- 导出 ----------------
 
     /**
-     * 打包日志 + 设备信息，写入「下载/AnyNight」。
+     * 打包日志 + 设备信息，写入系统「下载」根目录。
      *
      * MediaStore 自己插入的条目不需要任何存储权限（Android 10+），
      * 所以导出这一步不额外要权限。
@@ -141,7 +141,7 @@ final class Logx {
         File cache = new File(c.getCacheDir(), "export");
         if (!cache.exists() && !cache.mkdirs()) throw new IllegalStateException("无法创建临时目录");
         String stamp = new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(new Date());
-        String name = "anynight-log-" + stamp + ".zip";
+        String name = "AnyNight-log-" + stamp + ".zip";
         File zip = new File(cache, name);
 
         try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zip))) {
@@ -152,13 +152,12 @@ final class Logx {
             zos.closeEntry();
         }
 
-        // 复制到 Download/AnyNight（走 MediaStore，无需权限）
+        // 复制到 Download 根目录（走 MediaStore，无需权限）
         if (Build.VERSION.SDK_INT >= 29) {
             ContentValues v = new ContentValues();
             v.put(MediaStore.MediaColumns.DISPLAY_NAME, name);
             v.put(MediaStore.MediaColumns.MIME_TYPE, "application/zip");
-            v.put(MediaStore.MediaColumns.RELATIVE_PATH,
-                    Environment.DIRECTORY_DOWNLOADS + "/AnyNight");
+            v.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
             v.put(MediaStore.MediaColumns.IS_PENDING, 1);
             Uri uri = c.getContentResolver().insert(
                     MediaStore.Downloads.EXTERNAL_CONTENT_URI, v);
@@ -174,8 +173,8 @@ final class Logx {
             v.put(MediaStore.MediaColumns.IS_PENDING, 0);
             c.getContentResolver().update(uri, v, null, null);
             zip.delete();
-            i("日志已导出到 下载/AnyNight/" + name);
-            return "下载/AnyNight/" + name;
+            i("日志已导出到 下载/" + name);
+            return "下载/" + name;
         }
         throw new IllegalStateException("系统版本过低");
     }

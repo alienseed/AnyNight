@@ -31,8 +31,8 @@ That is exactly what AnyNight does — cleanly, and only while you are inside th
 - **Double-language UI** — follows the system language, with a one-tap switch (中文 / ENGLISH) at the bottom of the home screen.
 - **Overlay hint** — an optional pill over the app saying “switched by AnyNight”, so you can tell our change from an app's own dark mode.
 - **Fail-safe** — one-tap restore, automatic reconciliation after a crash or reinstall, a 45 s watchdog while a change is applied, and a 5-second self-reverting test.
-- **Read-only compatibility report** — ROM, Android version, Shizuku state, whether night mode is locked, whether per-app dark mode exists; exportable as a zip.
-- **No network. No analytics. No data collection.**
+- **Read-only compatibility report** — ROM, Android version, Shizuku state, whether night mode is locked, whether per-app dark mode exists; exportable as a zip, with a built-in update check that works over China-friendly mirrors.
+- **No analytics, nothing uploaded.** The only network call is the manual "Check for updates" — it asks GitHub for a version number, and only when you tap it.
 
 ## How it works
 
@@ -59,11 +59,11 @@ Latest APK: see [Releases](https://github.com/alienseed/AnyNight/releases/latest
 
 Mainland-China mirrors for the same file:
 
-- `https://ghfast.top/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.2.apk`
-- `https://gh-proxy.com/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.2.apk`
-- `https://ghproxy.net/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.2.apk`
+- `https://ghfast.top/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.4.apk`
+- `https://gh-proxy.com/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.4.apk`
+- `https://ghproxy.net/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.4.apk`
 
-The APK is ~322 KB. Package name `com.local.anynight`, version 1.9.2 (versionCode 22). SHA-256 `c3c8f0fb10a863ff628a16f5fb24ec712e5487c27336adf336e46ed4529c9b76`.
+The APK is ~344 KB. Package name `com.local.anynight`, version 1.9.4 (versionCode 29). SHA-256 `059d3159ac0ff15f00679ddc0a620a5e34f02bd702553d899a7e0bad09f6fe06`.
 
 > Shizuku itself also needs to come from its official repository — builds delivered by cloud backup, phone-to-phone migration or a vendor app store are often stale or repackaged and fail to pair. The app's built-in guide has the same mirror links.
 
@@ -116,11 +116,11 @@ gradle assembleRelease
 
 Developed and verified on a Xiaomi 17 Ultra (HyperOS 4.0.7.0, Android 17, SDK 37). The mechanism only relies on AOSP interfaces (`IUiModeManager`, task-stack listener, accessibility), so other Android 11+ devices should work — but vendor ROMs vary.
 
-If something misbehaves, open **Compatibility** in the app, tap **Export report**, and attach the zip to an issue. It contains the ROM, the detected capabilities and the switch log — far more useful than a description.
+If something misbehaves, open **Compatibility** in the app, tap **Export log**, and attach the zip to an issue. It contains the ROM, the detected capabilities and the switch log — far more useful than a description.
 
 ## Privacy
 
-No internet permission. No analytics, no crash reporting, no accounts. Logs stay in the app's private storage until you export them.
+No analytics, no crash reporting, no accounts, and nothing uploaded. The only network request is "Check for updates": it fetches a version number from GitHub (or a mirror), and only when you tap it. Logs stay in the app's private storage until you export them.
 
 ## License
 

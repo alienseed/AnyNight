@@ -85,6 +85,15 @@ public class MainActivity extends Activity {
         Shizuku.addBinderReceivedListenerSticky(onBinderReceived);
         Shizuku.addBinderDeadListener(onBinderDead);
         Shizuku.addRequestPermissionResultListener(onPermissionResult);
+
+        // 首次安装后的第一次打开：直接进教程，并弹一次「必须开启全部权限」
+        if (Cfg.firstRun(this)) {
+            Cfg.setFirstRunDone(this);
+            Intent g = new Intent(this, GuideActivity.class);
+            g.putExtra(GuideActivity.EXTRA_FIRST_RUN, true);
+            g.putExtra(GuideActivity.EXTRA_HIGHLIGHT, 1);
+            startActivity(g);
+        }
     }
 
     @Override
@@ -303,16 +312,16 @@ public class MainActivity extends Activity {
         View.OnClickListener[] actions = {
                 v -> {
                     if (!NightModeController.isBinderAlive()) {
-                        toast(tr("Shizuku 服务没在运行，先去 Shizuku 应用里启动"));
-                        openShizuku();
+                        toast(tr("先按第 1 步启用 Shizuku"));
+                        openGuideStep1();
                     } else {
                         toast(tr("Shizuku 服务正在运行"));
                     }
                 },
                 v -> {
                     if (!NightModeController.isBinderAlive()) {
-                        toast(tr("Shizuku 服务没在运行，先去 Shizuku 应用里启动"));
-                        openShizuku();
+                        toast(tr("先按第 1 步启用 Shizuku"));
+                        openGuideStep1();
                         return;
                     }
                     NightModeController.requestPermission();
@@ -447,25 +456,6 @@ public class MainActivity extends Activity {
         LinearLayout tipRow = new LinearLayout(this);
         tipRow.setOrientation(LinearLayout.HORIZONTAL);
         tipRow.setGravity(Gravity.CENTER);
-        TextView tip = text(tr("请我喝瓶大水"), 12, color(R.color.text_secondary), true);
-        tip.setGravity(Gravity.CENTER);
-        tip.setPadding(dp(14), 0, dp(14), 0);
-        tip.setBackground(shapeStroked(color(R.color.card), 17, color(R.color.card_stroke)));
-        tip.setOnClickListener(v -> startActivity(new Intent(this, TipActivity.class)));
-        tipRow.addView(tip, lp(ViewGroup.LayoutParams.WRAP_CONTENT, dp(34)));
-
-        View gap = new View(this);
-        tipRow.addView(gap, lp(dp(9), dp(1)));
-
-        TextView contact = text(tr("联系作者"), 12, color(R.color.text_secondary), true);
-        contact.setGravity(Gravity.CENTER);
-        contact.setPadding(dp(14), 0, dp(14), 0);
-        contact.setBackground(shapeStroked(color(R.color.card), 17, color(R.color.card_stroke)));
-        contact.setOnClickListener(v -> startActivity(new Intent(this, ContactActivity.class)));
-        tipRow.addView(contact, lp(ViewGroup.LayoutParams.WRAP_CONTENT, dp(34)));
-
-        View gap2 = new View(this);
-        tipRow.addView(gap2, lp(dp(9), dp(1)));
 
         // 语言切换：中文界面显示 ENGLISH，英文界面显示「中文」
         TextView lang = text(I18n.isEn(this) ? "中文" : "ENGLISH", 12,
@@ -478,6 +468,16 @@ public class MainActivity extends Activity {
             recreate();
         });
         tipRow.addView(lang, lp(ViewGroup.LayoutParams.WRAP_CONTENT, dp(34)));
+
+        View gap = new View(this);
+        tipRow.addView(gap, lp(dp(9), dp(1)));
+
+        TextView tip = text(tr("请我喝瓶大水"), 12, color(R.color.text_secondary), true);
+        tip.setGravity(Gravity.CENTER);
+        tip.setPadding(dp(14), 0, dp(14), 0);
+        tip.setBackground(shapeStroked(color(R.color.card), 17, color(R.color.card_stroke)));
+        tip.setOnClickListener(v -> startActivity(new Intent(this, TipActivity.class)));
+        tipRow.addView(tip, lp(ViewGroup.LayoutParams.WRAP_CONTENT, dp(34)));
 
         LinearLayout.LayoutParams tipRowLp = lp(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -898,5 +898,17 @@ public class MainActivity extends Activity {
         Intent i = getPackageManager().getLaunchIntentForPackage("moe.shizuku.privileged.api");
         if (i != null) startActivity(i);
         else toast(tr("未安装 Shizuku"));
+    }
+
+    /**
+     * 跳教程并闪一下第 1 步。
+     *
+     * Shizuku 自己的引导对新用户不算友好（无线调试、配对码），直接把人丢进 Shizuku
+     * 多半还是不知道点哪。教程里第 1 步结尾就有「打开 Shizuku」，从那里进去最顺。
+     */
+    private void openGuideStep1() {
+        Intent i = new Intent(this, GuideActivity.class);
+        i.putExtra(GuideActivity.EXTRA_HIGHLIGHT, 1);
+        startActivity(i);
     }
 }

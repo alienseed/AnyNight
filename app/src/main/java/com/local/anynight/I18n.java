@@ -296,7 +296,7 @@ final class I18n {
         add("个别应用不跟着变时，可改用系统自带的「按应用深色」。",
                 " If an app still ignores it, use the system's own per-app dark mode instead.");
         add("刷新信息", "Refresh");
-        add("导出报告", "Export report");
+        add("导出日志", "Export log");
         add("报告写到「下载/AnyNight」，里面是设备信息、运行日志和这次读取到的状态。",
                 "The report goes to Download/AnyNight with device info, logs and what this page "
                         + "just read.");
@@ -304,7 +304,7 @@ final class I18n {
                 " Send it to the author when something misbehaves — far more useful than a description.");
         add("已导出到 ", "Exported to ");
         add("导出失败：", "Export failed: ");
-        add("导出报告失败", "Report export failed");
+        add("导出日志失败", "Log export failed");
 
         // ---- 使用教程 ----
         add("按顺序做完下面几步。", "Work through these steps in order. ");
@@ -528,5 +528,70 @@ final class I18n {
 
         // ---- 首页打开日志（仅调试用） ----
         add("首页打开 v", "Home opened v");
+
+        // ---- v1.9.4：捐献页 / 联系页 / 更新 ----
+        add("微信扫码，长按图片可保存到相册",
+                "Scan with WeChat. Long-press the image to save it.");
+        add("此为捐献性质，金额随意，无法退费。捐献不构成软件盈利，软件仍为免费使用全部功能。",
+                "This is a voluntary donation of any amount and is non-refundable. It is not revenue: "
+                        + "every feature stays free.");
+        add("复制", "Copy");
+        add("长按邮箱可选中，或点右侧「复制」",
+                "Long-press the address to select it, or tap Copy.");
+        add("感谢你的反馈，但作者无法承诺是否回复或多久回复。",
+                "Thanks for the feedback — there is no promise of a reply, or of when.");
+        add("导出为 zip，存在系统「下载」根目录（文件名以 AnyNight 开头），发邮件时作为附件即可。",
+                "It is saved as a zip in the system Download folder (file name starts with AnyNight); "
+                        + "attach it to the email.");
+        add("报告写到系统「下载」根目录（AnyNight 开头），里面是设备信息、运行日志和这次读取到的状态。",
+                "The report goes to the system Download folder (name starts with AnyNight): device "
+                        + "info, logs and what this page just read.");
+        add("已复制这一步", "Step copied");
+        add("检查更新", "Check for updates");
+        add("正在检查…", "Checking…");
+        add("检查失败，网络不通或代理不可用", "Check failed: no network, or the mirror is unreachable");
+        add("已是最新版本 v", "You are on the latest version, v");
+        add("发现新版本 v", "New version v");
+        add("当前 v", "You are on v");
+        add("。下载后可直接覆盖安装，设置和已选应用都会保留。",
+                ". It installs over the current build; settings and your app list are kept.");
+        add("以后再说", "Not now");
+        add("下载", "Download");
+        add("正在下载 v", "Downloading v");
+        add("下载失败：", "Download failed: ");
+        add("网络错误", "network error");
+        add("请先允许本应用安装应用", "Allow AnyNight to install apps first");
+        add("无法启动安装：", "Could not start the installer: ");
+
+        // ---- v1.9.5：捐献文案 / 一键复制 / 首次引导 ----
+        add("此为捐献性质，金额随意，无法退费，非常感谢您的捐献！",
+                "It is a voluntary donation of any amount, non-refundable — thank you very much!");
+        add("本软件为作者失业在家开发，捐献不构成软件盈利，软件仍为免费使用全部功能。",
+                " Built at home between jobs: donations are not revenue, and every feature stays free.");
+        add("一键复制全部步骤", "Copy all steps");
+        add("全部步骤已复制，可直接粘贴", "All steps copied — paste them anywhere");
+        add("复制全部链接", "Copy all links");
+        add("先按第 1 步启用 Shizuku", "Start with step 1: set up Shizuku");
+        add("先开启全部权限", "Turn everything on first");
+        add("AnyNight 靠 Shizuku、无障碍和后台权限工作，缺一项就会「点了没反应」。",
+                "AnyNight needs Shizuku, accessibility and background permission; miss one and nothing "
+                        + "seems to happen.");
+        add("下面几步按顺序做完，再回首页点「立即测试」确认。",
+                " Work through the steps below in order, then go back and tap \"Test now\".");
+        add("从第 1 步开始", "Start with step 1");
+        add("打开", "Open");
+
+        // ---- v1.9.6：教程加无障碍步骤 / 按钮挪到右上角 ----
+        add("开启无障碍服务", "Turn on accessibility");
+        add("AnyNight 靠无障碍判断「现在前台是哪个应用」，没开就等于不知道你进了哪个应用。",
+                "AnyNight uses accessibility to know which app is in front; without it the app has no idea.");
+        add("设置 → 无障碍 → 已下载的应用 → 找到「AnyNight」并打开。",
+                " Settings → Accessibility → Downloaded apps → AnyNight → turn it on.");
+        add("去开启", "Turn on");
+        add("「任务切换页隐藏」必须在上锁那步之后才开。",
+                " \"Hide from Recents\" must come after the locking step.");
+        add("无法打开无障碍设置，请手动到 设置 → 无障碍",
+                "Could not open accessibility settings — go to Settings → Accessibility manually.");
+        add("复制全部", "Copy all");
     }
 }

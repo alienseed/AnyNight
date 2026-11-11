@@ -7,6 +7,10 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- 切换时在「对方应用」之上打一条提示，说明是本应用触发的 -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <!-- 仅用于「检查更新」：访问 GitHub（或国内代理）取最新版本号并下载安装包。
+         除这条链路外应用不发起任何网络请求，也不上传任何数据。 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <queries>
         <package android:name="moe.shizuku.privileged.api" />
@@ -124,6 +128,13 @@
             android:exported="true"
             android:multiprocess="false"
             android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
+
+        <!-- 只把下载好的安装包交给系统安装器读，别的一概不给 -->
+        <provider
+            android:name=".ApkProvider"
+            android:authorities="${applicationId}.apk"
+            android:exported="false"
+            android:grantUriPermissions="true" />
 
     </application>
 </manifest>
