@@ -17,7 +17,7 @@ If this saves you from one blinding white screen at 2 a.m., a ⭐ helps other pe
 <p align="center">
   <img src="docs/intro.gif" width="200" alt="Opening sequence">
   <br>
-  <sub>The 20 seconds on first launch · <a href="https://alienseed.github.io/AnyNight/intro.html">watch it full-width in a browser</a></sub>
+  <sub>The 20 seconds on first launch · <a href="https://alienseed.github.io/AnyNight/">watch it full-width in a browser</a></sub>
 </p>
 
 ---

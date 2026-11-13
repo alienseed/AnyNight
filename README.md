@@ -17,7 +17,7 @@
 <p align="center">
   <img src="docs/intro.gif" width="200" alt="开场动画">
   <br>
-  <sub>首次打开的那 20 秒 · <a href="https://alienseed.github.io/AnyNight/intro.html">在浏览器里全幅看一遍</a></sub>
+  <sub>首次打开的那 20 秒 · <a href="https://alienseed.github.io/AnyNight/">在浏览器里全幅看一遍</a></sub>
 </p>
 
 ---
