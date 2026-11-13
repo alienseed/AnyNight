@@ -14,6 +14,12 @@
   <img src="docs/guide.png" width="240" alt="使用教程">
 </p>
 
+<p align="center">
+  <img src="docs/intro.gif" width="200" alt="开场动画">
+  <br>
+  <sub>首次打开的那 20 秒 · <a href="https://alienseed.github.io/AnyNight/intro.html">在浏览器里全幅看一遍</a></sub>
+</p>
+
 ---
 
 ## 为什么需要它
