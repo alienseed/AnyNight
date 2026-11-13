@@ -29,6 +29,7 @@ That is exactly what AnyNight does — cleanly, and only while you are inside th
 - **Restores on exit** — leaving the app restores exactly the mode you were in before.
 - **Zero polling when idle** — no timers, no wake-ups; 0 CPU while nothing is happening.
 - **Double-language UI** — follows the system language, with a one-tap switch (中文 / ENGLISH) at the bottom of the home screen.
+- **A 20-second opening on first launch** — drawn entirely in code: no images, no new permissions, +22 KB to the APK. The last act follows the system theme so it hands off cleanly in either mode. Long-press the home title to replay it.
 - **Overlay hint** — an optional pill over the app saying “switched by AnyNight”, so you can tell our change from an app's own dark mode.
 - **Fail-safe** — one-tap restore, automatic reconciliation after a crash or reinstall, a 45 s watchdog while a change is applied, and a 5-second self-reverting test.
 - **Read-only compatibility report** — ROM, Android version, Shizuku state, whether night mode is locked, whether per-app dark mode exists; exportable as a zip, with a built-in update check that works over China-friendly mirrors.
@@ -59,11 +60,11 @@ Latest APK: see [Releases](https://github.com/alienseed/AnyNight/releases/latest
 
 Mainland-China mirrors for the same file:
 
-- `https://ghfast.top/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.4.apk`
-- `https://gh-proxy.com/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.4.apk`
-- `https://ghproxy.net/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.4.apk`
+- `https://ghfast.top/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.5.apk`
+- `https://gh-proxy.com/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.5.apk`
+- `https://ghproxy.net/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.5.apk`
 
-The APK is ~344 KB. Package name `com.local.anynight`, version 1.9.4 (versionCode 29). SHA-256 `059d3159ac0ff15f00679ddc0a620a5e34f02bd702553d899a7e0bad09f6fe06`.
+The APK is ~366 KB. Package name `com.local.anynight`, version 1.9.5 (versionCode 32). SHA-256 `19d9dc8bd2c176886f09491b3d6c7612d388563a72bebbee1aa4e5c9d1407713`.
 
 > Shizuku itself also needs to come from its official repository — builds delivered by cloud backup, phone-to-phone migration or a vendor app store are often stale or repackaged and fail to pair. The app's built-in guide has the same mirror links.
 

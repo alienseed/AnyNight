@@ -29,6 +29,7 @@ Android 只有一个全局深浅色开关，而且**没有给第三方应用留�
 - **离开就还原** —— 还原成你进入之前的那一档，不会留下改过的状态。
 - **空闲零轮询** —— 没有定时器、不唤醒；没事发生时 CPU 占用为 0。
 - **中英双语界面** —— 跟随系统语言，首页底部一键切换（中文 / ENGLISH）。
+- **首次启动一段 20 秒开场** —— 全部用代码画，没有图片、没有新增权限，安装包只多了 22 KB；第四幕跟随系统深浅色，深浅两种主题下都能直接接上首页。长按首页标题可重看。
 - **切换提示** —— 可在对方应用上显示一条小提示，说明「这次是 AnyNight 干的」，避免和它自带的深色开关混淆。
 - **兜底完整** —— 首页一键还原、进程被杀后自动对账、改动期间 45 秒看门狗、5 秒自动还原的测试。
 - **只读兼容性报告** —— ROM、Android 版本、Shizuku 状态、夜间模式是否被锁定、系统有没有按应用深色，可导出 zip；页面底部还能检查更新（走国内可用的镜像线路）。
@@ -59,11 +60,11 @@ Android 只有一个全局深浅色开关，而且**没有给第三方应用留�
 
 国内可直连的镜像（同一个文件）：
 
-- `https://ghfast.top/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.4.apk`
-- `https://gh-proxy.com/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.4.apk`
-- `https://ghproxy.net/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.4.apk`
+- `https://ghfast.top/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.5.apk`
+- `https://gh-proxy.com/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.5.apk`
+- `https://ghproxy.net/https://github.com/alienseed/AnyNight/releases/latest/download/app-v1.9.5.apk`
 
-安装包约 344 KB，包名 `com.local.anynight`，版本 1.9.4（versionCode 29）。校验值 SHA-256 `059d3159ac0ff15f00679ddc0a620a5e34f02bd702553d899a7e0bad09f6fe06`。
+安装包约 366 KB，包名 `com.local.anynight`，版本 1.9.5（versionCode 32）。校验值 SHA-256 `19d9dc8bd2c176886f09491b3d6c7612d388563a72bebbee1aa4e5c9d1407713`。
 
 > Shizuku 本身也请从官方仓库下载：云恢复、一键换机、系统应用商店里的版本常常偏旧或被替换，典型表现是能装能开但配对一直失败。应用内的 Shizuku 教程页放了同样的镜像链接。
 

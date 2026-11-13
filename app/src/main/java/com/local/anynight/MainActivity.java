@@ -44,6 +44,9 @@ public class MainActivity extends Activity {
     private static final int H_PADDING = 20;
     private static final int REQ_RECENTS_LOCK = 3001;
 
+    /** 从开场叙事过来。首页据此把内容从米白里淡出来，而不是硬切。 */
+    static final String EXTRA_FROM_INTRO = "from_intro";
+
     private LinearLayout root;
 
     private TextView pill;
@@ -75,11 +78,24 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // 第一次打开：先放开场叙事，播完它自己会再拉起本页
+        if (!Cfg.introSeen(this)) {
+            Cfg.setIntroSeen(this);
+            Logx.init(this);
+            Logx.i(tr("首次打开，播放开场"));
+            startActivity(new Intent(this, IntroActivity.class));
+            overridePendingTransition(0, 0);
+            finish();
+            return;
+        }
+
         Logx.init(this);
         Logx.i(tr("首页打开 v") + BuildConfig.VERSION_NAME);
         buildUi();
         applySystemBars();
         applyRecentsHidden();
+        settleFromIntro();
 
         TaskStackWatcher.setStateListener(this::refresh);
         Shizuku.addBinderReceivedListenerSticky(onBinderReceived);
@@ -87,13 +103,26 @@ public class MainActivity extends Activity {
         Shizuku.addRequestPermissionResultListener(onPermissionResult);
 
         // 首次安装后的第一次打开：直接进教程，并弹一次「必须开启全部权限」
+        // 开场刚淡出到米白时，先让首页停一瞬——否则「名字化开、界面就在那儿」
+        // 这个落点还没看清，整页就被教程顶走了
         if (Cfg.firstRun(this)) {
             Cfg.setFirstRunDone(this);
-            Intent g = new Intent(this, GuideActivity.class);
-            g.putExtra(GuideActivity.EXTRA_FIRST_RUN, true);
-            g.putExtra(GuideActivity.EXTRA_HIGHLIGHT, 1);
-            startActivity(g);
+            new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                if (isFinishing() || isDestroyed()) return;
+                Intent g = new Intent(this, GuideActivity.class);
+                g.putExtra(GuideActivity.EXTRA_FIRST_RUN, true);
+                g.putExtra(GuideActivity.EXTRA_HIGHLIGHT, 1);
+                startActivity(g);
+            }, 700);
         }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        // 「长按标题重看开场」回来时复用这一个实例，所以淡入要在两处都接上
+        setIntent(intent);
+        settleFromIntro();
     }
 
     @Override
@@ -199,6 +228,49 @@ public class MainActivity extends Activity {
 
     // ---------------- 界面 ----------------
 
+    /**
+     * 从开场叙事过来时，首页不是「切」上来的，而是从开场最后那一帧里被揭开。
+     *
+     * 这里刻意用的是「遮盖」而不是「让开场透出下面的首页」：
+     * 开场是独立的一页，首页在它之后才创建，顺序上不可能提前画好等着被透出；
+     * 而真让开场窗口变透明，慢机器上会先露一下桌面或黑底。
+     *
+     * 遮盖色取的是开场末帧色（`IntroView.endBg`）：白天米白、夜间近黑，与主题一致。
+     * 所以两种模式下都是「从同色雾里揭开」，既不会露窗口底，也不会出现异色交叉的脏灰。
+     */
+    private void settleFromIntro() {
+        if (!getIntent().getBooleanExtra(EXTRA_FROM_INTRO, false)) return;
+
+        final int lastFrame = IntroView.endBg(this);
+        final android.view.ViewGroup decor =
+                (android.view.ViewGroup) getWindow().getDecorView();
+        if (decor.findViewWithTag(VEIL_TAG) != null) return;   // 已经在揭了
+
+        // 状态栏那一条也归窗口底管，先换成末帧色，否则会先露一条异色边
+        getWindow().setBackgroundDrawable(
+                new android.graphics.drawable.ColorDrawable(lastFrame));
+
+        View veil = new View(this);
+        veil.setTag(VEIL_TAG);
+        veil.setBackgroundColor(lastFrame);
+        decor.addView(veil, new android.widget.FrameLayout.LayoutParams(
+                android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
+                android.widget.FrameLayout.LayoutParams.MATCH_PARENT));
+        veil.animate()
+                .alpha(0f)
+                .setDuration(620)
+                .setInterpolator(new android.view.animation.DecelerateInterpolator(1.6f))
+                .withEndAction(() -> {
+                    decor.removeView(veil);
+                    // 揭开完了，窗口底交还给主题：深色模式该黑还是黑
+                    getWindow().setBackgroundDrawable(
+                            new android.graphics.drawable.ColorDrawable(color(R.color.bg)));
+                })
+                .start();
+    }
+
+    private static final String VEIL_TAG = "intro_veil";
+
     private void buildUi() {
         statusDots.clear();
         statusValues.clear();
@@ -215,6 +287,12 @@ public class MainActivity extends Activity {
 
         TextView title = text("AnyNight", 26, color(R.color.text_primary), true);
         title.setLetterSpacing(-0.02f);
+        // 长按标题：重看开场。不占版面，也不用清数据——想再感受一次的时候顺手
+        title.setOnLongClickListener(v -> {
+            startActivity(new Intent(this, IntroActivity.class));
+            overridePendingTransition(0, 0);
+            return true;
+        });
         headerRow.addView(title, new LinearLayout.LayoutParams(
                 0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
 

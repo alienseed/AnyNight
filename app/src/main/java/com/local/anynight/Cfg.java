@@ -11,6 +11,7 @@ final class Cfg {
     private static final String KEY_HINT = "hint_overlay";
     private static final String KEY_RECENTS_LOCK = "recents_lock_done";
     private static final String KEY_FIRST_RUN_DONE = "first_run_done";
+    private static final String KEY_INTRO_SEEN = "intro_seen";
 
     private Cfg() {
     }
@@ -44,6 +45,15 @@ final class Cfg {
 
     static void setRecentsLockDone(Context c, boolean done) {
         sp(c).edit().putBoolean(KEY_RECENTS_LOCK, done).apply();
+    }
+
+    /** 开场叙事是否已经放过（只放一次）。 */
+    static boolean introSeen(Context c) {
+        return sp(c).getBoolean(KEY_INTRO_SEEN, false);
+    }
+
+    static void setIntroSeen(Context c) {
+        sp(c).edit().putBoolean(KEY_INTRO_SEEN, true).apply();
     }
 
     /** 首次安装后的第一次打开：自动进教程并弹一次提醒。 */
